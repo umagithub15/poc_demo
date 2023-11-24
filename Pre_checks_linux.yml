@@ -1,0 +1,22 @@
+---
+- name: Pre-checks on Linux Servers
+  hosts: all
+  gather_facts: true
+  become: false
+
+  tasks:
+    - name: Check available disk space
+      command: df -h
+      register: disk_space_result
+
+    - name: Check system uptime
+      command: uptime
+      register: uptime_result
+
+    - name: Display pre-check results
+      debug:
+        var: disk_space_result.stdout_lines
+
+    - name: Display system uptime
+      debug:
+        var: uptime_result.stdout
