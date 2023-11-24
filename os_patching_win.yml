@@ -1,0 +1,31 @@
+---
+- name: Patch Windows Servers
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Check for available updates
+      ansible.windows.win_updates:
+      register: available_updates
+
+    - name: Install updates if available
+      ansible.windows.win_updates:
+        state: installed
+      when: available_updates.updates and available_updates.updates | length > 0
+
+    - name: Reboot if updates require a reboot
+      ansible.windows.win_reboot:
+      when: available_updates.reboot_required
+
+    - name: Wait for server to come back online after reboot
+      wait_for_connection:
+      when: available_updates.reboot_required
+
+    - name: Check for updates after reboot
+      ansible.windows.win_updates:
+      register: post_reboot_updates
+      when: available_updates.reboot_required
+
+    - name: Display post-reboot update status
+      debug:
+        var: post_reboot_updates
+      when: available_updates.reboot_required
