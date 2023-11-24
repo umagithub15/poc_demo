@@ -1,0 +1,34 @@
+---
+- name: Patching Playbook
+  hosts: all
+  become: yes  # Run tasks with sudo
+
+  tasks:
+    - name: Update package cache (for Ubuntu)
+      when: "'Ubuntu' in ansible_distribution"
+      apt:
+        update_cache: yes
+      become: yes
+
+    - name: Update all packages (for Ubuntu)
+      when: "'Ubuntu' in ansible_distribution"
+      apt:
+        name: "*"
+        state: latest
+      become: yes
+
+    - name: Update all packages (for RHEL)
+      when: "'RedHat' in ansible_distribution"
+      yum:
+        name: "*"
+        state: latest
+      become: yes
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+      when: ansible_reboot_required | default(false)
+
+  handlers:
+    - name: Reboot handler
+      ansible.builtin.reboot:
+      listen: "reboot"
