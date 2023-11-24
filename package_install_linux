@@ -1,0 +1,16 @@
+---
+- name: Install Apache and MySQL
+  hosts: all
+  gather_facts: true
+  become: true  
+
+  tasks:
+    
+    - name: Install packages
+      ansible.builtin.package:
+        name: 
+          - "perl"  
+          - "curl"  
+        state: present
+
+  
