@@ -1,0 +1,15 @@
+---
+- name: Install Standard Applications on Windows
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Install Google Chrome
+      ansible.builtin.win_chocolatey:
+        name: googlechrome
+        state: present
+
+    - name: Install Mozilla Firefox
+      ansible.builtin.win_chocolatey:
+        name: firefox
+        state: present
